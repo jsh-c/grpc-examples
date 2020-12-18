@@ -30,7 +30,7 @@ import (
 )
 
 const (
-	defaultName = "world"
+	defaultName = "world Go client.."
 )
 
 var (
@@ -59,9 +59,12 @@ func main() {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+	for {	
+		r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		log.Printf("Greeting~~: %s", r.GetMessage())	
+		time.Sleep(10 * time.Second)
 	}
-	log.Printf("Greeting: %s", r.GetMessage())
 }
