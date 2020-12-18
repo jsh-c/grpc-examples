@@ -17,6 +17,7 @@ from __future__ import print_function
 import logging
 import os
 import sys
+import time
 
 import grpc
 
@@ -28,10 +29,19 @@ endpoint = os.getenv("GREETER_ENDPOINT", "localhost:50051")
 def handler(event, context):
     with grpc.insecure_channel(endpoint) as channel:
         stub = helloworld_pb2_grpc.GreeterStub(channel)
-        response = stub.SayHello(helloworld_pb2.HelloRequest(name=event['name']))
-    print("Received from backend: " + response.message)
-
+        response = stub.SayHello(helloworld_pb2.HelloRequest(name="World~"))
+        print("Received from server: " + response.message)
+        logging.info("Received from server: " + response.message)
+        time.sleep(30)
+        while True:
+            response = stub.SayHello(helloworld_pb2.HelloRequest(name=event['name']))
+            print("Received from server: " + response.message)
+            logging.info("Received from server: " + response.message)
+            time.sleep(30)
+            
 if __name__ == "__main__":
     event = {}
     event['name'] = " ".join(sys.argv[1:])
+    print("Starting python client: ... ")
+    logging.info("Starting python client: ...")
     handler(event, None)
